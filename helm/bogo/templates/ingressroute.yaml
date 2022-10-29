@@ -1,0 +1,29 @@
+﻿{{- if and (.Values.ingress.enabled) (eq .Values.ingress.type "traefik") }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "bogo.fullname" . }}
+  labels:
+    {{- include "bogo.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+  {{- if .Values.ingress.tls }}
+    - websecure
+  {{- else }}
+    - web
+  {{- end }}
+  routes:
+  {{- if .Values.ingress.hostname }}
+  - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
+  {{- else }}
+  - match: PathPrefix(`{{ .Values.ingress.path }}`)
+  {{- end }}
+    kind: Rule
+    services:
+    - name: {{ include "bogo.fullname" . }}
+      port: {{ .Values.service.port }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    stores: default
+  {{- end }}
+{{- end }}

@@ -19,4 +19,8 @@ RUN dotnet publish "bogo.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+ENV COMPlus_EnableDiagnostics=0
+COPY --from=busybox:stable /bin/busybox /bin/busybox
+
 ENTRYPOINT ["dotnet", "bogo.dll"]
