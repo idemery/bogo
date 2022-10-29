@@ -14,7 +14,7 @@ spec:
   {{- end }}
   routes:
   {{- if .Values.ingress.hostname }}
-  - match: Host(`{{ .Values.ingress.hostname }}`) && PathPrefix(`{{ .Values.ingress.path }}`)
+  - match: Host(`{{ .Values.ingress.hostname }}`)
   {{- else }}
   - match: PathPrefix(`{{ .Values.ingress.path }}`)
   {{- end }}
