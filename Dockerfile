@@ -17,8 +17,18 @@ FROM build AS publish
 RUN dotnet publish "bogo.csproj" -c Release -o /app/publish
 
 FROM base AS final
+
+# create user (appuser) with id (10001)
+RUN useradd appuser -u 10001 --user-group
+
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --chown=appuser --from=publish /app/publish .
+
+RUN mkdir -p /app/App_Data
+RUN chown -R appuser:appuser /app/App_Data
+VOLUME ["/app/App_Data"]
+
+USER 10001
 
 ENV COMPlus_EnableDiagnostics=0
 COPY --from=busybox:stable /bin/busybox /bin/busybox

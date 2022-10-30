@@ -56,6 +56,18 @@ spec:
           volumeMounts:
           - name: data
             mountPath: /app/App_Data
+      initContainers:
+      - name: chown
+        image: busybox
+        command: ["/bin/chown","-R","10001:10001", "/app/App_Data"]
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        securityContext:
+          runAsUser: 0
+          privileged: true
+        volumeMounts:
+        - name: data
+          mountPath: /app/App_Data
       volumes:
       - name: data
       {{- if .Values.persistence.enabled }}
